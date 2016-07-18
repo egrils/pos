@@ -8,42 +8,27 @@ function printReceipt(tags) {
   console.log(receiptText);
 }
 
-function buildCartItems(tags) {
+let buildCartItems = (tags) => {
   let cartItems = [];
-  let allItems = loadAllItems();
-  let items = [];
-  let count = 1;
-  let frontBarcode = '';
-  let frontItem;
+  for (let tag of tags){
+    let splitItem = tag.split('-');
+    let barcode = splitItem[0];
+    let count = parseFloat(splitItem[1] || 1);
 
-  tags.forEach(function (tag) {
-    let barcode = tag.substr(0,10);
-    allItems.forEach(function (item) {
-      if (item.barcode === barcode){
-        items.push({item:item,tag:tag});
-        if (barcode != tag){
-          for (let i = 1 ;i < tag.substr(11,12);i ++){
-            items.push({item:item,tag:tag});
-          }
-        }
-      }
+    let cartItem = cartItems.find((cartItem) => {
+      return cartItem.item.barcode === barcode;
     });
-  });
-  items.forEach(function (Item) {
-    let barcode = Item.item.barcode;
 
-    if (barcode != frontBarcode) {
-      cartItems.push({item:frontItem,count:count});
-      count = 1;
+    if (cartItem){
+      cartItem.count ++;
     }else {
-      count ++;
-    }
-    frontBarcode = Item.item.barcode;
-    frontItem = Item.item;
-  });
+      let item = loadAllItems().find((item) =>{
+        return item.barcode === barcode;
+      });
 
-  cartItems.push({item:frontItem,count:count});
-  cartItems.splice(0,1);
+      cartItems.push({item:item,count:count});
+    }
+  }
 
   return cartItems;
 }

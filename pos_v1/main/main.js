@@ -48,9 +48,7 @@ let buildPromotionItems = (cartItems) => {
 
     for (let promotionTag of promotionTags){
       if (promotionTag === cartItem.item.barcode){
-        if (cartItem.count >= 3){
-          subSave = cartItem.item.price *　parseInt(cartItem.count / 3);
-        }
+        subSave = cartItem.item.price *　parseInt(cartItem.count / 3);
       }
     }
 

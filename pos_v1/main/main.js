@@ -1,4 +1,5 @@
 'use strict';
+
 function printReceipt(tags) {
   let cartItems = buildCartItems(tags);
   let promotionItems = buildPromotionItems(cartItems);
@@ -11,20 +12,20 @@ function printReceipt(tags) {
 let buildCartItems = (tags) => {
   let cartItems = [];
   for (let tag of tags){
-    let splitItem = tag.split('-');
-    let barcode = splitItem[0];
-    let count = parseFloat(splitItem[1] || 1);
+    let splitTag = tag.split('-');
+    let barcode = splitTag[0];
+    let count = parseFloat(splitTag[1] || 1);
 
     let cartItem = cartItems.find((cartItem) => {
-      return cartItem.item.barcode === barcode;
-    });
+        return cartItem.item.barcode === barcode;
+  });
 
     if (cartItem){
       cartItem.count ++;
     }else {
       let item = loadAllItems().find((item) =>{
-        return item.barcode === barcode;
-      });
+          return item.barcode === barcode;
+    });
 
       cartItems.push({item:item,count:count});
     }
@@ -33,7 +34,7 @@ let buildCartItems = (tags) => {
   return cartItems;
 }
 
-function buildPromotionItems(cartItems) {
+let buildPromotionItems = (cartItems) => {
   let allPromotions = loadPromotions();
   let getBacodes = () => {
     for (let promotion of allPromotions){
@@ -48,13 +49,17 @@ function buildPromotionItems(cartItems) {
   cartItems.forEach(function (cartItem) {
     let subSave = 0;
     let subTotal = 0;
+    let tag = cartItem.item.barcode;
     barcodes.forEach(function (barcode) {
-      if (cartItem.item.barcode === barcode){
-        subSave = cartItem.item.price;
+      if (barcode === tag){
+        if (cartItem.count >= 3){
+          subSave = cartItem.item.price *　parseInt(cartItem.count / 3);
+        }
       }
     });
+
     subTotal = cartItem.item.price * cartItem.count - subSave;
-    promotionItems.push({cartItem:cartItem,subSave:subSave,subTotal:subTotal});
+    promotionItems.push({cartItem:cartItem,subSave:subSave,subTotal:subTotal})
   });
 
   return promotionItems;
